@@ -58,6 +58,7 @@ We recommend using method 1. For packing soundscape mixtures into lmdbs:
 ### Experiments
 The following sections outline how to reproduce experiments conducted in the paper. Before running any experiment, make sure your paths are correct in the corresponding `.cfg` files.
 
+---
 #### Number of synthesized soundscapes v/s val mAP
 This section studies how val mAP performance scales with number of training mixtures, using ResNet-18 architecture.
 
@@ -83,6 +84,7 @@ This will write evaluation metrics for <RUN_INDEX> in `results.csv`. One can the
 
 The pretrained models for this experiment are not provided, as there would be too many checkpoints.
 
+---
 #### CNN Baselines
 This experiment studies performance of various CNN architectures trained on 60k synthetic soundscapes. The experiments were run on two different machines, with ResNet-50, EfficientNet-B0/B1 and DenseNet-121 ran on single V100 machine, and all other experiments run on 4x GTX 1080 machine.
 Scripts `experiments_60k_mixtures.sh` and `experiments_60k_mixtures_v100.sh` were used for training these models as follows:
@@ -99,6 +101,7 @@ The `--export_weights` option exports model `state_dict` as simple `.pth` files 
 
 Pre-trained models are provided [here](). As previously mentioned, we only provide checkpoints for the best performing run for a CNN architecture, as opposed to the paper, which reports *average* results across runs. The following table lists the checkpoints and their runs.
 
+---
 #### Transfer Learning Experiments
 ##### AudioSet
 
