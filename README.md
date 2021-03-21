@@ -14,7 +14,7 @@ This repository contains code for reproducing all experiments done in the paper.
 * One can easily modify `src/data/inmemory_lmdb_dataset.py` if you need a regular dataset that reads data from disk on-the-fly.
 
 ### Pre-trained models
-As mentioned in the paper, we performed experiments several times and reported average results. However, since releasing so many models would be extremely cumbersome, only the best performing for an experiment is released. If you need all the best performing checkpoints from all the runs, please get in touch.
+As mentioned in the paper, we performed experiments several times and reported average results. However, since releasing so many models would be cumbersome, only the checkpoints from best performing run for an experiment are released. If you need checkpoints from all the runs, please get in touch.
 
 ### Per dataset configuration files
 We utilize `.cfg` based training. cfgs for each CNN architecture used for each dataset are provided in `cfgs_v2`. These cfg files list hyperparameters for each experiment, and paired with provided `experiments_*.sh` files give exact settings the experiment was run under.
@@ -56,7 +56,7 @@ We recommend using method 1. For packing soundscape mixtures into lmdbs:
 * To generate lmdbs for replicating Experiment 4.1 from the paper, view `generate_mixtures.sh`. lmdbs for AudioSet, VGGSound and ESC-50 experiments can be generated in a similar manner. ESC-50 lmdbs can be found [here]().
 
 ### Experiments
-The following sections outline how to reproduce experiments conducted in the paper. Before running any experiment, make sure your paths are correct in the corresponding `.cfg` files.
+The following sections outline how to reproduce experiments conducted in the paper. Before running any experiment, make sure your paths are correct in the corresponding `.cfg` files. Pre-trained models can be found [here](). Download and extract the `pretrained-models.tar.gz` file.
 
 ---
 #### Number of synthesized soundscapes v/s val mAP
@@ -99,36 +99,70 @@ python eval_gise_mixtures.py --lbl_map meta/lbl_map.json --lmdb_path mixtures_lm
 ```
 The `--export_weights` option exports model `state_dict` as simple `.pth` files into `export_dir` for later use in transfer learning experiments. Performance metrics are written into `results.csv`, which can then averaged across runs.
 
-Pre-trained models are provided [here](). As previously mentioned, we only provide checkpoints for the best performing run for a CNN architecture, as opposed to the paper, which reports *average* results across runs. The following table lists the checkpoints and their runs.
+Pre-trained models are provided can be found in `pretrained-models/experiments_60k_mixtures`. As previously mentioned, we only provide checkpoints for the best performing run for a CNN architecture, as opposed to the paper, which reports *average* results across runs. The following table depicts performance of each model; the first column lists the eval mAP across multiple runs, and `ckpt eval mAP` lists performance of the provided checkpoint.
+
+| Model |  eval mAP (3-run avg) | ckpt eval mAP  | 
+| ----- | ----- | ----- |
+|       |       |       |
+| ResNet-44| 0.5656 | 0.5689|
+| ResNet-54| 0.5634 | 0.5671|
+| ResNet-18| 0.5551 | 0.5635|
+| ResNet-34| 0.5722 | 0.5783|
+| ResNet-50| 0.5677 | 0.5727|
+|          |      |     |
+| EfficientNet-B0 | 0.5984 | 0.6032|
+| EfficientNet-B1 | 0.6062 | 0.6097|
+|          |      |     |
+| DenseNet-121 | 0.6053 | 0.6136|
+
 
 ---
 #### Transfer Learning Experiments
-##### AudioSet
+1. AudioSet
 
-The AudioSet video ids used for experiments are available in `data/audioset/`. Assuming you have downloaded the dataset and prepared `balanced_train.lmdb` and `eval.lmdb` for training and evaluation data, respectively, along with `lbl_map.json` that maps your string labels to integer indices, running AudioSet experiments is straightforward. No hyperparameter tuning is done on the eval set, and is used simply for EarlyStopping.
+    The AudioSet video ids used for experiments are available in `data/audioset/`. Assuming you have downloaded the dataset and prepared `balanced_train.lmdb` and `eval.lmdb` for training and evaluation data, respectively, along with `lbl_map.json` that maps your string labels to integer indices, running AudioSet experiments is straightforward. No hyperparameter tuning is done on the eval set, and is used simply for EarlyStopping.
 
-1. Make sure you have exported `.pth` weights from ResNet-18 and EfficientNet-B1 architecures into appropriate filenames. You can also directly download exported `.pth` weights for transfer learning [here]()
+    1. Make sure you have exported `.pth` weights from ResNet-18 and EfficientNet-B1 architecures into appropriate filenames. Exported `.pth` weights for transfer learning are provided for transfer learning experiments. `pretrained-models/experiments_audioset`
 
-2. `experiments_audioset.sh` and `experiments_audioset_v100.sh` were used for ResNet-18 and EfficientNet-B1 experiments, respectively. 
+    2. `experiments_audioset.sh` and `experiments_audioset_v100.sh` were used for ResNet-18 and EfficientNet-B1 experiments, respectively. 
 
-3. Once training is done, performance metrics can be calculated using the following script
-   ```
-   python eval_gise_mixtures.py --lbl_map audioset/meta/lbl_map.json --lmdb_path audioset/lmdbs/eval.lmdb --exp_dir <EXPERIMENT_DIR>_[ft,scratch]/r<RUN_INDEX> --results_csv <EXPERIMENT_DIR>_[ft,scratch]/r<RUN_INDEX>/results.csv --num_timesteps 1001
-   ```
-You'll notice an additional parameter, `num_timesteps`. This parameter signifies number of timesteps center cropped from the spectrogram; 1001 corresponds to a 10 sec crop, which is the size of audioset clips.
+    3. Once training is done, performance metrics can be calculated using the following script
+    ```
+    python eval_gise_mixtures.py --lbl_map audioset/meta/lbl_map.json --lmdb_path audioset/lmdbs/eval.lmdb --exp_dir <EXPERIMENT_DIR>_[ft,scratch]/r<RUN_INDEX> --results_csv <EXPERIMENT_DIR>_[ft,scratch]/r<RUN_INDEX>/results.csv --num_timesteps 1001
+    ```
+    You'll notice an additional parameter, `num_timesteps`. This parameter signifies number of timesteps center cropped from the spectrogram; 1001 corresponds to a 10 sec crop, which is the size of audioset clips.
 
-<b>ATTENTION</b> Make sure your delimiter for string labels in your lmdb files is `;`, otherwise change the value for `delimiter` in audioset cfgs to desired value.
+    The following table lists performance of the provided checkpoint files.
+    | Model | GISE-51-Mixtures Pretraining | eval mAP (3-run avg) | ckpt eval mAP  |
+    | ----- | ----- | ----- | ----- |
+    |       |       |       |       |
+    | ResNet-18| False | 0.2053 | 0.2095|
+    | EfficientNet-B1 | False | 0.2287 | 0.2317|
+    | ResNet-18| True | 0.2236 | 0.2244|
+    | EfficientNet-B1 | True | 0.2595 | 0.2603|
 
-##### VGGSound
+    <b>ATTENTION</b> Make sure your delimiter for string labels in your lmdb files is `;`, otherwise change the value for `delimiter` in audioset cfgs to desired value.
+    
 
-As opposed to the previous experiments, which are multilabel multiclass tasks, VGGSound is multiclass classification task and is trained using the `train_classifier.py` script. Assuming you have obtained the dataset and prepared `train.lmdb`, `test.lmdb` as well as the corresponding `lbl_map.json`, view `experiments_vggsound_v100.sh` for more details. No hyperparameter tuning is done on the test set, and is used simply for EarlyStopping.
+2. VGGSound
 
-<!-- TODO: WRITE eval_vggsound.py -->
-Evaluation of performance metrics for VGGSound can be done using `eval_vggsound.py`.
+    As opposed to the previous experiments, which are multilabel multiclass tasks, VGGSound is multiclass classification task and is trained using the `train_classifier.py` script. Assuming you have obtained the dataset and prepared `train.lmdb`, `test.lmdb` as well as the corresponding `lbl_map.json`, view `experiments_vggsound_v100.sh` for more details. No hyperparameter tuning is done on the test set, and is used simply for EarlyStopping. VGGSound experiments were ran just once, and the provided checkpoints `pretrained-models/experiments_vggsound` have the same performance as mentioned in the paper.
 
-##### ESC-50
+    <!-- TODO: WRITE eval_vggsound.py -->
+    Evaluation of performance metrics for VGGSound can be done using `eval_vggsound.py`.
 
-Finally, to run ESC-50 experiments, download the provided ESC-50 lmdbs [here]() and run `esc50_experiments.sh`. No need for further evaluation is needed since we're only concerned with fold-wise accuracy; just average best validation accuracy from train time `metrics.csv` results across runs across folds.
+3. ESC-50
+
+    Finally, to run ESC-50 experiments, download the provided ESC-50 lmdbs [here]() and run `esc50_experiments.sh`. No need for further evaluation is needed since we're only concerned with fold-wise accuracy; just average best validation accuracy from train time `metrics.csv` results across runs across folds.
+    
+    <b>Attention:</b> For ESC-50, we provide checkpoints corresponding to best run for each fold. Thus, the effective 5-fold performance of models will be higher than that listed in the paper. More details are listed in the table below. More information can be found in `pretrained-models/experiments_esc50` folder.
+
+    | Model |  Accuracy % (3-run avg) | Accuracy % of provided checkpoints |
+    | ----- | -------- | ---------- |
+    |       |          |            |
+    | ResNet-18 | 83.92 | 85.35 |
+    | EfficientNet-B1 | 85.72 | 86.75 |
+
 
 ## References
 [1] Fonseca, E., Favory, X., Pons, J., Font, F. and Serra, X., 2020. FSD50k: an open dataset of human-labeled sound events. arXiv preprint arXiv:2010.00475.  
