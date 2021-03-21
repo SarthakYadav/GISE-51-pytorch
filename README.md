@@ -105,7 +105,7 @@ Pre-trained models are provided [here](). As previously mentioned, we only provi
 #### Transfer Learning Experiments
 ##### AudioSet
 
-The AudioSet video ids used for experiments are available in `data/audioset/`. Assuming you have downloaded the dataset and prepared `balanced_train.lmdb` and `eval.lmdb` for training and evaluation data, respectively, along with `lbl_map.json` that maps your string labels to integer indices, running AudioSet experiments is straightforward. 
+The AudioSet video ids used for experiments are available in `data/audioset/`. Assuming you have downloaded the dataset and prepared `balanced_train.lmdb` and `eval.lmdb` for training and evaluation data, respectively, along with `lbl_map.json` that maps your string labels to integer indices, running AudioSet experiments is straightforward. No hyperparameter tuning is done on the eval set, and is used simply for EarlyStopping.
 
 1. Make sure you have exported `.pth` weights from ResNet-18 and EfficientNet-B1 architecures into appropriate filenames. You can also directly download exported `.pth` weights for transfer learning [here]()
 
@@ -121,6 +121,14 @@ You'll notice an additional parameter, `num_timesteps`. This parameter signifies
 
 ##### VGGSound
 
+As opposed to the previous experiments, which are multilabel multiclass tasks, VGGSound is multiclass classification task and is trained using the `train_classifier.py` script. Assuming you have obtained the dataset and prepared `train.lmdb`, `test.lmdb` as well as the corresponding `lbl_map.json`, view `experiments_vggsound_v100.sh` for more details. No hyperparameter tuning is done on the test set, and is used simply for EarlyStopping.
+
+<!-- TODO: WRITE eval_vggsound.py -->
+Evaluation of performance metrics for VGGSound can be done using `eval_vggsound.py`.
+
+##### ESC-50
+
+Finally, to run ESC-50 experiments, download the provided ESC-50 lmdbs [here]() and run `esc50_experiments.sh`. No need for further evaluation is needed since we're only concerned with fold-wise accuracy; just average best validation accuracy from train time `metrics.csv` results across runs across folds.
 
 ## References
 [1] Fonseca, E., Favory, X., Pons, J., Font, F. and Serra, X., 2020. FSD50k: an open dataset of human-labeled sound events. arXiv preprint arXiv:2010.00475.  
