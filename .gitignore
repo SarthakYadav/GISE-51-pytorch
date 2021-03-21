@@ -6,6 +6,16 @@ __pycache__/
 # C extensions
 *.so
 
+# IDE related
+.idea/
+.vscode/
+metadata/
+generated/
+generated_samples/
+samples_2/
+test_samples/
+pretrained/
+
 # Distribution / packaging
 .Python
 build/
