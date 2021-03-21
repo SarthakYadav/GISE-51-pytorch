@@ -1,7 +1,7 @@
 # GISE-51-pytorch
 
-Official code release for the paper [GISE-51: A scalable isolated sound events dataset]() in pytorch using [pytorch-lightning](https://github.com/PyTorchLightning/pytorch-lightning). Instructions and implementation for replicating all baseline experiments, including pre-trained models. 
-
+Official code release for the paper [GISE-51: A scalable isolated sound events dataset]() in pytorch using [pytorch-lightning](https://github.com/PyTorchLightning/pytorch-lightning). Instructions and implementation for replicating all baseline experiments, including pre-trained models. If you use this code or part of it, please cite:
+> Sarthak Yadav, Mary Ellen Foster, "GISE-51: A scalable isolated sound events dataset"
 ## About
 Most  of  the  existing  isolated  sound  event  datasets  comprisea small number of sound event classes,  usually 10 to 15,  re-stricted to a small domain, such as domestic and urban soundevents. In this work, we introduce GISE-51, a dataset spanning51 isolated sound event classes belonging to a broad domain ofevent types. We also release GISE-51-Mixtures, a dataset of 5-second soundscapes with hard-labelled event boundaries synthe-sized from GISE-51 isolated sound events. We conduct baselinesound event recognition (SER) experiments on the GISE-51-Mixtures dataset, benchmarking prominent convolutional neu-ral networks, and models trained with the dataset demonstratestrong transfer learning performance on existing audio recog-nition benchmarks. Together, GISE-51 and GISE-51-Mixtures attempt to address some of the shortcomings of recent soundevent datasets, providing an open, reproducible benchmark forfuture research along with the freedom to adapt the includedisolated  sound  events  for  domain-specific  applications.
 
@@ -58,6 +58,8 @@ We recommend using method 1. For packing soundscape mixtures into lmdbs:
 ### Experiments
 The following sections outline how to reproduce experiments conducted in the paper. Before running any experiment, make sure your paths are correct in the corresponding `.cfg` files. Pre-trained models can be found [here](). Download and extract the `pretrained-models.tar.gz` file.
 
+`lbl_map.json` contains a json serialized dictionary that maps dataset labels to corresponding integer indices. To allow inference on pre-trained models, we provide `lbl_map.json` corresponding to all datasets in the `./data` directory.
+
 ---
 #### Number of synthesized soundscapes v/s val mAP
 This section studies how val mAP performance scales with number of training mixtures, using ResNet-18 architecture.
@@ -80,7 +82,7 @@ Once this is done, you need to run evaluation to check performance on the *eval*
 ```
 python eval_all_mixtures.py --lbl_map meta/lbl_map.json --lmdb_path mixtures_lmdb/eval.lmdb --exp_dir <EXPERIMENT_DIR>/r<RUN_INDEX> --results_csv <EXPERIMENT_DIR>/r<RUN_INDEX>/results.csv
 ```
-This will write evaluation metrics for <RUN_INDEX> in `results.csv`. One can then average results across runs. `lbl_map.json` contains a json serialized dictionary that maps dataset labels to corresponding integer indices.
+This will write evaluation metrics for <RUN_INDEX> in `results.csv`. One can then average results across runs. 
 
 The pretrained models for this experiment are not provided, as there would be too many checkpoints.
 
@@ -128,7 +130,7 @@ Pre-trained models are provided can be found in `pretrained-models/experiments_6
 
     3. Once training is done, performance metrics can be calculated using the following script
     ```
-    python eval_gise_mixtures.py --lbl_map audioset/meta/lbl_map.json --lmdb_path audioset/lmdbs/eval.lmdb --exp_dir <EXPERIMENT_DIR>_[ft,scratch]/r<RUN_INDEX> --results_csv <EXPERIMENT_DIR>_[ft,scratch]/r<RUN_INDEX>/results.csv --num_timesteps 1001
+    python eval_gise_mixtures.py --lbl_map data/audioset/lbl_map.json --lmdb_path <path to eval lmdb> --exp_dir <EXPERIMENT_DIR>_[ft,scratch]/r<RUN_INDEX> --results_csv <EXPERIMENT_DIR>_[ft,scratch]/r<RUN_INDEX>/results.csv --num_timesteps 1001
     ```
     You'll notice an additional parameter, `num_timesteps`. This parameter signifies number of timesteps center cropped from the spectrogram; 1001 corresponds to a 10 sec crop, which is the size of audioset clips.
 
@@ -148,8 +150,10 @@ Pre-trained models are provided can be found in `pretrained-models/experiments_6
 
     As opposed to the previous experiments, which are multilabel multiclass tasks, VGGSound is multiclass classification task and is trained using the `train_classifier.py` script. Assuming you have obtained the dataset and prepared `train.lmdb`, `test.lmdb` as well as the corresponding `lbl_map.json`, view `experiments_vggsound_v100.sh` for more details. No hyperparameter tuning is done on the test set, and is used simply for EarlyStopping. VGGSound experiments were ran just once, and the provided checkpoints `pretrained-models/experiments_vggsound` have the same performance as mentioned in the paper.
 
-    <!-- TODO: WRITE eval_vggsound.py -->
     Evaluation of performance metrics for VGGSound can be done using `eval_vggsound.py`.
+    ```
+    python eval_vggsound.py --ckpt_path <path to ckpt> --lbl_map ./data/vggsound/lbl_map.json --lmdb_path <path to test.lmdb>
+    ```
 
 3. ESC-50
 
@@ -166,3 +170,4 @@ Pre-trained models are provided can be found in `pretrained-models/experiments_6
 
 ## References
 [1] Fonseca, E., Favory, X., Pons, J., Font, F. and Serra, X., 2020. FSD50k: an open dataset of human-labeled sound events. arXiv preprint arXiv:2010.00475.  
+

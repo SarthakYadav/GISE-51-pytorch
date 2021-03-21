@@ -1,3 +1,0 @@
-Model,mAP,mAUC,dprime,ckpt_path
-efficientnet-b1_ft_32_adam_mixup,0.1800209635908177,0.9109963090714337,1.904826461770851,r1/mixup/efficientnet-b1_ft_32_adam_mixup/ckpts/epoch=75_train_loss=0.001_val_mAP=0.231.ckpt
-resnet_18_lmdb_adam_32x4_adam_mixers,0.18736530864747783,0.921559729183161,2.0020191800157483,r1/mixup/resnet_18_lmdb_adam_32x4_adam_mixers/ckpts/epoch=48_train_loss=0.001_val_mAP=0.210.ckpt
