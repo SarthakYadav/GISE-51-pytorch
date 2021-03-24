@@ -6,7 +6,7 @@ Official code release for the paper [GISE-51: A scalable isolated sound events d
 ## About
 Most of the existing isolated sound event datasets comprise a small number of sound event classes,  usually 10 to 15,  restricted to a small domain, such as domestic and urban sound events. In this work, we introduce GISE-51, a dataset spanning51 isolated sound event classes belonging to a broad domain of event types. We also release GISE-51-Mixtures, a dataset of 5-second soundscapes with hard-labelled event boundaries synthesized from GISE-51 isolated sound events. We conduct baseline sound event recognition (SER) experiments on the GISE-51-Mixtures dataset, benchmarking prominent convolutional neural networks, and models trained with the dataset demonstrate strong transfer learning performance on existing audio recognition benchmarks. Together, GISE-51 and GISE-51-Mixtures attempt to address some of the shortcomings of recent sound event datasets, providing an open, reproducible benchmark for future research along with the freedom to adapt the included isolated sound events for domain-specific applications.
 
-This repository contains code for reproducing all experiments done in the paper. For more information on the dataset, as well as the pre-trained models, visit [GISE-51: A scalable isolated sound events dataset](doi.org/10.5281/zenodo.4593514)
+This repository contains code for reproducing all experiments done in the paper. For more information on the dataset, as well as the pre-trained models, visit [GISE-51: A scalable isolated sound events dataset](https://zenodo.org/record/4593514#.YFrRsEMzZhE)
 
 ## Keypoints
 ### In-memory data loading
@@ -42,7 +42,7 @@ There are two options for generating lmdb files:
 
 We recommend using method 1. For packing soundscape mixtures into lmdbs:
 
-* Download tar archive for corresponding data subset from [dataset page](doi.org/10.5281/zenodo.4593514)
+* Download tar archive for corresponding data subset from [dataset page](https://zenodo.org/record/4593514#.YFrRsEMzZhE)
 * Run `pack_mixtures_into_lmdb.py` to generate lmdb files from soundscape mixtures as follows. 
    ```
     # for generating lmdb for 60k soundscapes
@@ -57,7 +57,7 @@ We recommend using method 1. For packing soundscape mixtures into lmdbs:
 * To generate lmdbs for replicating Experiment 4.1 from the paper, view `generate_mixtures.sh`. lmdbs for AudioSet, VGGSound and ESC-50 experiments can be generated in a similar manner. ESC-50 lmdbs can be found [here]().
 
 ### Experiments
-The following sections outline how to reproduce experiments conducted in the paper. Before running any experiment, make sure your paths are correct in the corresponding `.cfg` files. Pre-trained models can be found [here](doi.org/10.5281/zenodo.4593514). Download and extract the `pretrained-models.tar.gz` file.
+The following sections outline how to reproduce experiments conducted in the paper. Before running any experiment, make sure your paths are correct in the corresponding `.cfg` files. Pre-trained models can be found [here](https://zenodo.org/record/4593514#.YFrRsEMzZhE). Download and extract the `pretrained-models.tar.gz` file.
 
 `lbl_map.json` contains a json serialized dictionary that maps dataset labels to corresponding integer indices. To allow inference on pre-trained models, we provide `lbl_map.json` corresponding to all datasets in the `./data` directory.
 
