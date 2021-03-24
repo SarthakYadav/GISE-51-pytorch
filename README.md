@@ -1,11 +1,12 @@
 # GISE-51-pytorch
 
-Official code release for the paper [GISE-51: A scalable isolated sound events dataset]() in pytorch using [pytorch-lightning](https://github.com/PyTorchLightning/pytorch-lightning). Instructions and implementation for replicating all baseline experiments, including pre-trained models. If you use this code or part of it, please cite:
-> Sarthak Yadav, Mary Ellen Foster, "GISE-51: A scalable isolated sound events dataset"
-## About
-Most  of  the  existing  isolated  sound  event  datasets  comprisea small number of sound event classes,  usually 10 to 15,  re-stricted to a small domain, such as domestic and urban soundevents. In this work, we introduce GISE-51, a dataset spanning51 isolated sound event classes belonging to a broad domain ofevent types. We also release GISE-51-Mixtures, a dataset of 5-second soundscapes with hard-labelled event boundaries synthe-sized from GISE-51 isolated sound events. We conduct baselinesound event recognition (SER) experiments on the GISE-51-Mixtures dataset, benchmarking prominent convolutional neu-ral networks, and models trained with the dataset demonstratestrong transfer learning performance on existing audio recog-nition benchmarks. Together, GISE-51 and GISE-51-Mixtures attempt to address some of the shortcomings of recent soundevent datasets, providing an open, reproducible benchmark forfuture research along with the freedom to adapt the includedisolated  sound  events  for  domain-specific  applications.
+Official code release for the paper [GISE-51: A scalable isolated sound events dataset](https://arxiv.org/abs/2103.12306) in pytorch using [pytorch-lightning](https://github.com/PyTorchLightning/pytorch-lightning). Instructions and implementation for replicating all baseline experiments, including pre-trained models. If you use this code or part of it, please cite:
+> Sarthak Yadav and Mary Ellen Foster, "GISE-51: A scalable isolated sound events dataset", arXiv:2103.12306, 2021
 
-This repository contains code for reproducing all experiments done in the paper. For more information on the dataset, as well as the pre-trained models, visit [GISE-51: A scalable isolated sound events dataset]()
+## About
+Most  of  the  existing  isolated  sound  event  datasets  comprisea small number of sound event classes,  usually 10 to 15,  re-stricted to a small domain, such as domestic and urban soundevents. In this work, we introduce GISE-51, a dataset spanning51 isolated sound event classes belonging to a broad domain ofevent types. We also release GISE-51-Mixtures, a dataset of 5-second soundscapes with hard-labelled event boundaries synthe-sized from GISE-51 isolated sound events. We conduct baselinesound event recognition (SER) experiments on the GISE-51-Mixtures dataset, benchmarking prominent convolutional neu-ral networks, and models trained with the dataset demonstratestrong transfer learning performance on existing audio recog-nition benchmarks. Together, GISE-51 and GISE-51-Mixtures attempt to address some of the shortcomings of recent soundevent datasets, providing an open, reproducible benchmark forfuture research along with the freedom to adapt the included isolated  sound  events  for  domain-specific  applications.
+
+This repository contains code for reproducing all experiments done in the paper. For more information on the dataset, as well as the pre-trained models, visit [GISE-51: A scalable isolated sound events dataset](doi.org/10.5281/zenodo.4593514)
 
 ## Keypoints
 ### In-memory data loading
@@ -41,7 +42,7 @@ There are two options for generating lmdb files:
 
 We recommend using method 1. For packing soundscape mixtures into lmdbs:
 
-* Download tar archive for corresponding data subset from [dataset page]()
+* Download tar archive for corresponding data subset from [dataset page](doi.org/10.5281/zenodo.4593514)
 * Run `pack_mixtures_into_lmdb.py` to generate lmdb files from soundscape mixtures as follows. 
    ```
     # for generating lmdb for 60k soundscapes
@@ -56,13 +57,19 @@ We recommend using method 1. For packing soundscape mixtures into lmdbs:
 * To generate lmdbs for replicating Experiment 4.1 from the paper, view `generate_mixtures.sh`. lmdbs for AudioSet, VGGSound and ESC-50 experiments can be generated in a similar manner. ESC-50 lmdbs can be found [here]().
 
 ### Experiments
-The following sections outline how to reproduce experiments conducted in the paper. Before running any experiment, make sure your paths are correct in the corresponding `.cfg` files. Pre-trained models can be found [here](). Download and extract the `pretrained-models.tar.gz` file.
+The following sections outline how to reproduce experiments conducted in the paper. Before running any experiment, make sure your paths are correct in the corresponding `.cfg` files. Pre-trained models can be found [here](doi.org/10.5281/zenodo.4593514). Download and extract the `pretrained-models.tar.gz` file.
 
 `lbl_map.json` contains a json serialized dictionary that maps dataset labels to corresponding integer indices. To allow inference on pre-trained models, we provide `lbl_map.json` corresponding to all datasets in the `./data` directory.
 
+Before commencing with experiments, lmdb files need to be created. Download and extract `train*.tar.gz`, `val.tar.gz` and `eval.tar.gz` into a separate directory. `prepare_mixtures_lmdb.sh` can be used to create all the GISE-51-Mixtures lmdb files and as reference for creating specific lmdb files.
+
+```
+./prepare_mixtures_lmdb.sh <MIXTURES_DIR> <LMDB_DIR>
+```
+
 ---
 #### Number of synthesized soundscapes v/s val mAP
-This section studies how val mAP performance scales with number of training mixtures, using ResNet-18 architecture.
+This section studies how val mAP performance scales with number of training mixtures, using ResNet-18 architecture.  To prepare lmdb files for this experiment, 
 
 To run this experiment, simply use `train_all_mixtures.py` as below
 ```
@@ -157,7 +164,7 @@ Pre-trained models are provided can be found in `pretrained-models/experiments_6
 
 3. ESC-50
 
-    Finally, to run ESC-50 experiments, download the provided ESC-50 lmdbs [here]() and run `esc50_experiments.sh`. No need for further evaluation is needed since we're only concerned with fold-wise accuracy; just average best validation accuracy from train time `metrics.csv` results across runs across folds.
+    Finally, to run ESC-50 experiments, download the provided ESC-50 lmdbs [here](https://gla-my.sharepoint.com/:f:/g/personal/2552300y_student_gla_ac_uk/EpZkbOWaqvtHkoJJGFUq774BlDcQwj5s-nMhf3vBVjvBOQ?e=PotHV9) and run `esc50_experiments.sh`. No need for further evaluation is needed since we're only concerned with fold-wise accuracy; just average best validation accuracy from train time `metrics.csv` results across runs across folds.
     
     <b>Attention:</b> For ESC-50, we provide checkpoints corresponding to best run for each fold. Thus, the effective 5-fold performance of models will be higher than that listed in the paper. More details are listed in the table below. More information can be found in `pretrained-models/experiments_esc50` folder.
 
@@ -169,5 +176,12 @@ Pre-trained models are provided can be found in `pretrained-models/experiments_6
 
 
 ## References
-[1] Fonseca, E., Favory, X., Pons, J., Font, F. and Serra, X., 2020. FSD50k: an open dataset of human-labeled sound events. arXiv preprint arXiv:2010.00475.  
+[1] Fonseca, Eduardo, et al. "FSD50k: an open dataset of human-labeled sound events." arXiv preprint arXiv:2010.00475 (2020).
 
+[2] Gemmeke, Jort F., et al. "Audio set: An ontology and human-labeled dataset for audio events." 2017 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP). IEEE, 2017.
+
+[3] Chen, Honglie, et al. "Vggsound: A large-scale audio-visual dataset." ICASSP 2020-2020 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP). IEEE, 2020.
+
+[4] Piczak, Karol J. "ESC: Dataset for environmental sound classification." Proceedings of the 23rd ACM international conference on Multimedia. 2015.
+
+[5] Yadav, Sarthak et al. "GISE-51: A scalable isolated sound events dataset", arXiv preprint arXiv:2103.12306 (2021).
