@@ -36,13 +36,13 @@ To generate GISE-51-Mixtures, `scripts/generate_mixtures.py` was used. It's prov
 If you do want to generate exact mixtures from `isolated_events.tar.gz`, you'll have to use the provided `mixtures_jams.tar.gz`, which contains `.jams` annotation files and can be used by Scaper to generate mixtures from. For more information, visit [Scaper Tutorials](https://scaper.readthedocs.io/en/latest/tutorial.html).
 
 ### Data Preparation
-There are two options for generating lmdb files:
+Before commencing with experiments, lmdb files need to be created. There are two options for generating lmdb files:
 1. Downloading provided tar archives and pack them into lmdbs. <b>(Recommended)</b>
 2. Downloading `noises.tar.gz`, `isolated_events.tar.gz` and `mixtures_jams.tar.gz`, generate soundscapes locally using scaper from jams files, convert soundscapes to `.flac` (for lower memory usage) using `scripts/wav2flac.py` and pack them into mixtures.
 
 We recommend using method 1. For packing soundscape mixtures into lmdbs:
 
-* Download tar archive for corresponding data subset from [dataset page](https://zenodo.org/record/4593514#.YFrRsEMzZhE)
+* Download `train*.tar.gz` (all if you want to repeat 4.1, just `train.tar.gz` otherwise), `val.tar.gz` and `eval.tar.gz` from [dataset page](https://zenodo.org/record/4593514#.YFrRsEMzZhE) and extract into a separate directory.
 * Run `pack_mixtures_into_lmdb.py` to generate lmdb files from soundscape mixtures as follows. 
    ```
     # for generating lmdb for 60k soundscapes
@@ -54,18 +54,18 @@ We recommend using method 1. For packing soundscape mixtures into lmdbs:
     # for generating eval lmdb
     python pack_mixtures_into_lmdb.py --mixture_dir "mixtures_flac/eval" --lmdb_path mixtures_lmdb/eval.lmdb --map_size 2e10
    ```
-* To generate lmdbs for replicating Experiment 4.1 from the paper, view `generate_mixtures.sh`. lmdbs for AudioSet, VGGSound and ESC-50 experiments can be generated in a similar manner. ESC-50 lmdbs can be found [here]().
+* `prepare_mixtures_lmdb.sh` can be used to create all the GISE-51-Mixtures lmdb files and as reference for creating specific lmdb files.
+
+```
+./prepare_mixtures_lmdb.sh <MIXTURES_DIR> <LMDB_DIR>
+```
+
+* lmdbs for AudioSet, VGGSound and ESC-50 experiments can be generated in a similar manner. ESC-50 lmdbs can be found [here](https://gla-my.sharepoint.com/:f:/g/personal/2552300y_student_gla_ac_uk/EpZkbOWaqvtHkoJJGFUq774BlDcQwj5s-nMhf3vBVjvBOQ?e=PotHV9).
 
 ### Experiments
 The following sections outline how to reproduce experiments conducted in the paper. Before running any experiment, make sure your paths are correct in the corresponding `.cfg` files. Pre-trained models can be found [here](https://zenodo.org/record/4593514#.YFrRsEMzZhE). Download and extract the `pretrained-models.tar.gz` file.
 
 `lbl_map.json` contains a json serialized dictionary that maps dataset labels to corresponding integer indices. To allow inference on pre-trained models, we provide `lbl_map.json` corresponding to all datasets in the `./data` directory.
-
-Before commencing with experiments, lmdb files need to be created. Download and extract `train*.tar.gz`, `val.tar.gz` and `eval.tar.gz` into a separate directory. `prepare_mixtures_lmdb.sh` can be used to create all the GISE-51-Mixtures lmdb files and as reference for creating specific lmdb files.
-
-```
-./prepare_mixtures_lmdb.sh <MIXTURES_DIR> <LMDB_DIR>
-```
 
 ---
 #### Number of synthesized soundscapes v/s val mAP
